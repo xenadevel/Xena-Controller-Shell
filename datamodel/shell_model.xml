@@ -1,0 +1,22 @@
+<Shell>
+
+    <ShellAttributes>
+    </ShellAttributes>
+
+    <ShellModel Family="Traffic Generator Controller">
+        <ResourceModel Name="Xena Controller" Description="Xena controller" SupportsConcurrentCommands="true">
+			<AttachedAttributes>
+        		<AttachedAttribute Name="User" IsOverridable="true" IsLocal="true" UserInput="true">
+            		<AllowedValues />
+          		</AttachedAttribute>
+        		<AttachedAttribute Name="Password" IsOverridable="true" IsLocal="true" UserInput="true">
+            		<AllowedValues />
+          		</AttachedAttribute>
+			</AttachedAttributes>
+            <Drivers>
+                <DriverName>XenaControllerDriver</DriverName>
+            </Drivers>			
+        </ResourceModel>
+    </ShellModel>
+
+</Shell>

@@ -1,0 +1,27 @@
+<Driver Description="Shell to setup and run Xena traffic generator" MainClass="driver.XenaControllerDriver" Name="XenaControllerDriver" Version="1.2.7">
+    <Layout>
+         <Category Name="Hidden Commands">
+            <Command Description="" DisplayName="Keep Alive" EnableCancellation="true" Name="keep_alive" Tags="" />
+        </Category>
+
+		<Command Description="Load configuration and reserve ports" DisplayName="Load Configuration" Name="load_config">
+	    	<Parameters>
+            	<Parameter Description="Full path to Xena configurations directory" DisplayName="Xena configs folder" Mandatory="True" Name="xena_configs_folder" Type="String" />
+            </Parameters>
+        </Command>
+        <Command Description="Start Traffic" DisplayName="Start Traffic" Name="start_traffic">
+            <Parameters>
+            	<Parameter AllowedValues="True, False" DefaultValue="False" Description="True - return after traffic finish to run, False - return immediately" DisplayName="Blocking" Mandatory="True" Name="blocking" Type="Lookup" />
+            </Parameters>
+        </Command>
+        <Command Description="Stop Traffic" DisplayName="Stop Traffic" Name="stop_traffic">
+        </Command>
+        <Command Description="Get view statistics" DisplayName="Get Statistics" Name="get_statistics">
+        	<Parameters>
+            	<Parameter DefaultValue="" Description="Port Statistics, Traffic Item Statistics, Flow Statistics, etc." DisplayName="View Name" Mandatory="True" Name="view_name" Type="String" />
+                <Parameter AllowedValues="CSV, JSON" DefaultValue="CSV" Description="CSV or JSON" DisplayName="Output Type" Mandatory="True" Name="output_type" Type="Lookup" />
+            </Parameters>
+        </Command>
+
+    </Layout>
+</Driver>

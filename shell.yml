@@ -1,0 +1,7 @@
+shell:
+  author: Yoram Shamir
+  description: Xena Manager Controller
+  driver_name: XenaControllerDriver
+  email: yoram-s@quali.com
+  name: xena_manager_controller
+  version: 1.2.7

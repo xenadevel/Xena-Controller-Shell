@@ -21,8 +21,6 @@ class XenaHandler(TrafficHandler):
         self.logger = logger
 
         user = context.resource.attributes['User']
-        encripted_password = context.resource.attributes['Password']
-        self.password = CloudShellSessionContext(context).get_api().DecryptPassword(encripted_password).Value
         self.xm = init_xena(self.logger, user)
 
     def tearDown(self):
@@ -39,9 +37,15 @@ class XenaHandler(TrafficHandler):
             config = get_family_attribute(my_api, reserved_port, 'Logical Name').Value.strip()
             address = get_address(reserved_port)
             self.logger.debug('Configuration {} will be loaded on Physical location {}'.format(config, address))
-            chassis, module, port = address.split('/')
-            self.xm.session.add_chassis(chassis, self.password)
-            xena_port = XenaPort('{}/{}'.format(module, port), self.xm.session.chassis_list[chassis])
+            chassis = my_api.GetResourceDetails(reserved_port.Name.split('/')[0])
+            encripted_password = my_api.GetAttributeValue(chassis.Name, 'Xena Chassis Shell 2G.Password').Value
+            password = CloudShellSessionContext(context).get_api().DecryptPassword(encripted_password).Value
+            tcp_port = my_api.GetAttributeValue(chassis.Name, 'Xena Chassis Shell 2G.Controller TCP Port').Value
+            if not tcp_port:
+                tcp_port = '22611'
+            ip, module, port = address.split('/')
+            self.xm.session.add_chassis(ip, int(tcp_port), password)
+            xena_port = XenaPort(self.xm.session.chassis_list[ip], '{}/{}'.format(module, port))
             xena_port.reserve(force=True)
             xena_port.load_config(path.join(xena_configs_folder, config) + '.xpc')
 

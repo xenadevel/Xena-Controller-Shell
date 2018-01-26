@@ -15,11 +15,9 @@ from driver import XenaControllerDriver
 
 address = '176.22.65.114'
 user = 'yshamir'
-password = 'h8XUgX3gyjY0vKMg0wQxKg=='
 
-ports = ['xena 2g/Module6/Port4', 'xena 2g/Module6/Port5']
-attributes = {'User': user,
-              'Password': password}
+ports = ['xena 2g/Module6/Port0', 'xena 2g/Module6/Port1']
+attributes = {'User': user}
 
 
 class TestXenaControllerDriver(unittest.TestCase):

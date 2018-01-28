@@ -6,7 +6,7 @@ import sys
 import unittest
 import json
 
-from cloudshell.api.cloudshell_api import AttributeNameValue, InputNameValue
+from cloudshell.api.cloudshell_api import InputNameValue
 
 from cloudshell.traffic.tg_helper import get_reservation_resources, set_family_attribute, get_address
 
@@ -18,8 +18,7 @@ user = 'yshamir'
 password = 'xena'
 
 ports = ['xena 2g/Module6/Port4', 'xena 2g/Module6/Port5']
-attributes = [AttributeNameValue('User', user),
-              AttributeNameValue('Password', password)]
+attributes = []
 
 
 class TestIxNetworkControllerDriver(unittest.TestCase):

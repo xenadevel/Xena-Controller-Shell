@@ -2,11 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from os import path
-import sys
-import unittest
 import json
 
-from cloudshell.api.cloudshell_api import InputNameValue
+from cloudshell.api.cloudshell_api import AttributeNameValue, InputNameValue
 
 from cloudshell.traffic.tg_helper import get_reservation_resources, set_family_attribute, get_address
 
@@ -15,19 +13,18 @@ from shellfoundry.releasetools.test_helper import (create_session_from_cloudshel
 
 address = '176.22.65.114'
 user = 'yshamir'
-password = 'xena'
 
-ports = ['xena 2g/Module6/Port4', 'xena 2g/Module6/Port5']
-attributes = []
+ports = ['xena-117/Module0/Port0', 'xena-117/Module0/Port1']
+attributes = [AttributeNameValue('User', user)]
 
 
-class TestIxNetworkControllerDriver(unittest.TestCase):
+class TestIxNetworkControllerDriver(object):
 
-    def setUp(self):
+    def setup(self):
         self.session = create_session_from_cloudshell_config()
         self.context = create_command_context(self.session, ports, 'Xena Controller', attributes)
 
-    def tearDown(self):
+    def teardown(self):
         end_reservation(self.session, self.context.reservation.reservation_id)
 
     def test_load_config(self):
@@ -47,8 +44,7 @@ class TestIxNetworkControllerDriver(unittest.TestCase):
         assert(int(json.loads(port_stats.Output)[port_name]['pt_total_packets']) == 16000)
         stream_stats = self._exec_command('get_statistics',
                                           InputNameValue('view_name', 'Stream'), InputNameValue('output_type', 'JSON'))
-        stream_name = get_address(self.reservation_ports[0])[-3:] + '/0'
-        assert(int(json.loads(stream_stats.Output)[stream_name]['packets']) == 8000)
+        assert(int(json.loads(stream_stats.Output)['Stream 1-1']['packets']) == 8000)
         tpld_stats = self._exec_command('get_statistics',
                                         InputNameValue('view_name', 'TPLD'), InputNameValue('output_type', 'JSON'))
         tpld_name = get_address(self.reservation_ports[0])[-3:] + '/0'
@@ -63,7 +59,3 @@ class TestIxNetworkControllerDriver(unittest.TestCase):
     def _exec_command(self, command, *params):
         return self.session.ExecuteCommand(self.context.reservation.reservation_id, 'Xena Controller', 'Service',
                                            command, list(params))
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

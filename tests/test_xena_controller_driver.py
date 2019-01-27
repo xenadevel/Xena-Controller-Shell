@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from os import path
+import os
 import sys
-import unittest
 import logging
 
 from cloudshell.traffic.tg_helper import get_reservation_resources, get_address, set_family_attribute
@@ -13,16 +12,15 @@ from shellfoundry.releasetools.test_helper import (create_session_from_cloudshel
 
 from driver import XenaControllerDriver
 
-address = '176.22.65.114'
 user = 'yshamir'
 
-ports = ['xena 2g/Module6/Port0', 'xena 2g/Module6/Port1']
+ports = ['xena-117/Module0/Port0', 'xena-117/Module0/Port1']
 attributes = {'User': user}
 
 
-class TestXenaControllerDriver(unittest.TestCase):
+class TestXenaControllerDriver(object):
 
-    def setUp(self):
+    def setup(self):
         self.session = create_session_from_cloudshell_config()
         self.context = create_command_context(self.session, ports, 'Xena Controller', attributes)
         self.driver = XenaControllerDriver()
@@ -30,7 +28,7 @@ class TestXenaControllerDriver(unittest.TestCase):
         print self.driver.logger.handlers[0].baseFilename
         self.driver.logger.addHandler(logging.StreamHandler(sys.stdout))
 
-    def tearDown(self):
+    def teardown(self):
         self.driver.cleanup()
         end_reservation(self.session, self.context.reservation.reservation_id)
 
@@ -42,7 +40,7 @@ class TestXenaControllerDriver(unittest.TestCase):
                                                            'Xena Chassis Shell 2G.GenericTrafficGeneratorPort')
         set_family_attribute(self.session, self.reservation_ports[0], 'Logical Name', 'test_config')
         set_family_attribute(self.session, self.reservation_ports[1], 'Logical Name', 'test_config')
-        self.driver.load_config(self.context, path.dirname(__file__))
+        self.driver.load_config(self.context, os.path.dirname(__file__))
 
     def test_run_traffic(self):
         self.test_load_config()
@@ -52,8 +50,7 @@ class TestXenaControllerDriver(unittest.TestCase):
         port_name = get_address(self.reservation_ports[0])
         assert(int(port_stats[port_name]['pt_total_packets']) == 16000)
         stream_stats = self.driver.get_statistics(self.context, 'Stream', 'JSON')
-        stream_name = get_address(self.reservation_ports[0])[-3:] + '/0'
-        assert(int(stream_stats[stream_name]['packets']) == 8000)
+        assert(int(stream_stats['Stream 1-1']['packets']) == 8000)
         tpld_stats = self.driver.get_statistics(self.context, 'TPLD', 'JSON')
         tpld_name = get_address(self.reservation_ports[0])[-3:] + '/0'
         assert(int(tpld_stats[tpld_name]['pr_tpldtraffic_pac']) == 8000)
@@ -66,7 +63,3 @@ class TestXenaControllerDriver(unittest.TestCase):
         stats = self.driver.get_statistics(self.context, 'Port', 'JSON')
         assert(int(stats[get_address(self.reservation_ports[0])]['pt_total_packets']) < 16000)
         self.driver.stop_traffic(self.context)
-
-
-if __name__ == '__main__':
-    sys.exit(unittest.main())

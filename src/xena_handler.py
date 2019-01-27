@@ -9,9 +9,10 @@ from cloudshell.traffic.handler import TrafficHandler
 from cloudshell.traffic.tg_helper import (get_reservation_resources, get_address, attach_stats_csv,
                                           get_family_attribute, is_blocking)
 
-from xenamanager.xena_app import init_xena
-from xenamanager.xena_port import XenaPort
-from xenamanager.xena_statistics_view import XenaPortsStats, XenaStreamsStats, XenaTpldsStats
+from trafficgenerator.tgn_utils import ApiType
+from xenavalkyrie.xena_app import init_xena
+from xenavalkyrie.xena_port import XenaPort
+from xenavalkyrie.xena_statistics_view import XenaPortsStats, XenaStreamsStats, XenaTpldsStats
 
 
 class XenaHandler(TrafficHandler):
@@ -21,7 +22,7 @@ class XenaHandler(TrafficHandler):
         self.logger = logger
 
         user = context.resource.attributes['User']
-        self.xm = init_xena(self.logger, user)
+        self.xm = init_xena(ApiType.socket, self.logger, user)
 
     def tearDown(self):
         self.xm.session.release_ports()
